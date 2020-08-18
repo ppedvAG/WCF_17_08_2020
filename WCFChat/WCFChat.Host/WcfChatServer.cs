@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.ServiceModel;
 using WCFChat.Contracts;
 
 namespace WCFChat.Host
 {
-    class WcfServer : IWcfChatServer
+    class WcfChatServer : IWcfChatServer
     {
         List<string> users = new List<string>();
 
@@ -14,7 +15,9 @@ namespace WCFChat.Host
         {
             users.Add(user);
             Trace.WriteLine($"Login: {user}");
-            //..
+
+            OperationContext.Current.GetCallbackChannel<IWcfChatClient>().LoginResponse(true, $"Hallo {user}");
+            
         }
 
         public void Logout()

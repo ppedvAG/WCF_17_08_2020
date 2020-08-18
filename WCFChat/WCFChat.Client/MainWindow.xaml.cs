@@ -1,28 +1,61 @@
-﻿using System;
+﻿using AdonisUI.Controls;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using System.IO;
+using System.ServiceModel;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using WCFChat.Contracts;
 
 namespace WCFChat.Client
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow 
+    public partial class MainWindow : IWcfChatClient
     {
         public MainWindow()
         {
             InitializeComponent();
+
+            var tcpBind = new NetTcpBinding();
+            var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://localhost:1"));
+            server = df.CreateChannel();
         }
+
+        IWcfChatServer server = null;
+
+        private void Login(object sender, System.Windows.RoutedEventArgs e)
+        {
+            server.Login(userNameTb.Text);
+        }
+
+        public void LoginResponse(bool loginOk, string msg)
+        {
+            chatLb.Items.Add( msg);
+
+            scrollChatViewer.ScrollToEnd();
+
+        }
+
+        public void LogoutResponse(bool logoutOk, string msg)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowImage(Stream image)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowText(string msg)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowUserlist(IEnumerable<string> users)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

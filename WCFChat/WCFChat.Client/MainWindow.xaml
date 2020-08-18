@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:controls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
+                       xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WCFChat.Client"
-        mc:Ignorable="d"
+        mc:Ignorable="d" 
         Title="MainWindow" Height="400" Width="600">
     <Window.Style>
         <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}"/>
@@ -26,18 +27,18 @@
         </Style>
     </Window.Resources>-->
 
-    <DockPanel>
+    <DockPanel  >
 
         <WrapPanel DockPanel.Dock="Top"  Margin="8">
             <Label Margin="4,0" VerticalAlignment="Center">Name</Label>
             <TextBox Margin="4,0" Width="80" Name="userNameTb" />
-            <Button Margin="4,0">Login</Button>
+            <Button Click="Login" Margin="4,0">Login</Button>
             <Button Margin="4,0">Logout</Button>
         </WrapPanel>
 
 
 
-        <ListBox DockPanel.Dock="Right" Name="usersLb" Width="100"/>
+        <ListBox DockPanel.Dock="Right" Name="usersLb" Margin="4,2" Width="100" BorderThickness="1" BorderBrush="{DynamicResource {x:Static adonisUi:Brushes.Layer1BorderBrush}}"/>
 
 
         <Grid DockPanel.Dock="Bottom" >
@@ -56,7 +57,7 @@
             <Button Grid.Column="1" Margin="4,2"  >Senden</Button>
             <Button Grid.Column="1" Margin="4,2" Grid.Row="1" >PM</Button>
 
-            <Button Grid.Column="2" Margin="4,0" Grid.RowSpan="2" >
+            <Button Grid.Column="2" VerticalAlignment="Center" Margin="4,0" Grid.RowSpan="2" >
                 <!--<Button.Resources>
                     <Style TargetType="Button">
                         <Setter Property="Template">
@@ -76,7 +77,11 @@
 
         </Grid>
 
-        <ListBox Name="chatLb"  />
+        <ScrollViewer Margin="4,2" Name="scrollChatViewer" BorderThickness="1" BorderBrush="{DynamicResource {x:Static adonisUi:Brushes.Layer1BorderBrush}}">
+            <ItemsControl  Name="chatLb" VerticalAlignment="Bottom"/>
+        </ScrollViewer>
+
+
 
 
     </DockPanel>
