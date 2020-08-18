@@ -20,6 +20,8 @@ namespace WCFChat.Host
             var host = new ServiceHost(typeof(WcfChatServer));
 
             var tcpBind = new NetTcpBinding();
+            tcpBind.MaxReceivedMessageSize = int.MaxValue;
+
             host.AddServiceEndpoint(typeof(IWcfChatServer), tcpBind, "net.tcp://localhost:1");
 
             host.Open();

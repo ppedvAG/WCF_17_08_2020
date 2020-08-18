@@ -52,26 +52,10 @@ namespace WCFChat.Host
                 cb.LogoutResponse(false, $"Du warst nie eingeloggt!!!");
             }
 
-            /* geht auch
-            if (users.ContainsValue(cb))
-            {
-                var userEntry = users.First(x => x.Value == cb);
-                users.Remove(userEntry.Key);
-                cb.LogoutResponse(true, $"bye bye {userEntry.Key}");
 
-            }
-            else
-            {
-                cb.LogoutResponse(false, $"Du warst nie eingeloggt!!!");
-            }
-
-            */
         }
 
-        public void SendImage(Stream image)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public void SendText(string msg)
         {
@@ -103,7 +87,27 @@ namespace WCFChat.Host
 
         public void Whisper(string to, string msg)
         {
-            throw new NotImplementedException();
+            var cbFrom = OperationContext.Current.GetCallbackChannel<IWcfChatClient>();
+            var userFrom = users.Where(x => x.Value == cbFrom).Select(x => x.Key).FirstOrDefault();
+
+            if (users.TryGetValue(to, out var cbTo))
+            {
+                var msgToClient = $"****** [{DateTime.Now:T}] <{userFrom}> {msg}";
+                Trace.WriteLine($"Whisper: To:{to} {msgToClient}");
+                cbTo.ShowText(msgToClient);
+            }
+        }
+
+        public void SendImage(Stream image)
+        {
+            var ms = new MemoryStream();
+            image.CopyTo(ms);
+
+            CallClients(x =>
+            {
+                ms.Position = 0;
+                x.ShowImage(ms);
+            });
         }
     }
 }
