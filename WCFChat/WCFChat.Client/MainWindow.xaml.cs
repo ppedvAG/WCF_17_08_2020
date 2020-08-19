@@ -34,7 +34,14 @@ namespace WCFChat.Client
             var tcpBind = new NetTcpBinding();
             tcpBind.Security.Mode = SecurityMode.None;
             tcpBind.MaxReceivedMessageSize = int.MaxValue;
-            var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://52.157.156.58:80"));
+
+            var wshttpBind = new WSDualHttpBinding();
+            wshttpBind.Security.Mode = WSDualHttpSecurityMode.Message;
+            wshttpBind.MaxReceivedMessageSize = int.MaxValue;
+
+            //var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://52.157.156.58:80"));
+            //var df = new DuplexChannelFactory<IWcfChatServer>(this, wshttpBind, new EndpointAddress("http://52.157.156.58:80"));
+            var df = new DuplexChannelFactory<IWcfChatServer>(this, wshttpBind, new EndpointAddress("http://localhost:80"));
             //var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://192.168.178.103:6500"));
             server = df.CreateChannel();
             server.Login(userNameTb.Text);

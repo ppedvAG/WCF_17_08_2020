@@ -22,7 +22,13 @@ namespace WCFChat.Host
             var tcpBind = new NetTcpBinding();
             tcpBind.MaxReceivedMessageSize = int.MaxValue;
 
-            host.AddServiceEndpoint(typeof(IWcfChatServer), tcpBind, "net.tcp://localhost:1");
+
+            var wshttpBind = new WSDualHttpBinding();
+            wshttpBind.Security.Mode = WSDualHttpSecurityMode.Message;
+            wshttpBind.MaxReceivedMessageSize = int.MaxValue;
+
+            //host.AddServiceEndpoint(typeof(IWcfChatServer), tcpBind, "net.tcp://localhost:80");
+            host.AddServiceEndpoint(typeof(IWcfChatServer), wshttpBind, "http://localhost:80");
 
             host.Open();
             Trace.WriteLine("Server wurde gestartet");
