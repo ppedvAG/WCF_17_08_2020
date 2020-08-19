@@ -52,6 +52,8 @@ namespace WCFChat.Host
             var webEp = host.AddServiceEndpoint(typeof(IRESTfulService), webBind, "http://localhost:2");
             webEp.EndpointBehaviors.Add(webB);
 
+            host.Description.Behaviors.Add(new ServiceHealthBehavior() { HttpsGetEnabled = true, HttpGetUrl = new Uri("http://localhost:3") });
+
             host.Open();
             Trace.WriteLine("Server wurde gestartet");
 
