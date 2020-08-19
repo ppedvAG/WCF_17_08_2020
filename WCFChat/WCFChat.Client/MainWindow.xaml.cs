@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -32,17 +33,35 @@ namespace WCFChat.Client
         private void Login(object sender, System.Windows.RoutedEventArgs e)
         {
             var tcpBind = new NetTcpBinding();
-            tcpBind.Security.Mode = SecurityMode.None;
+            //tcpBind.Security.Transport.ClientCredentialType = TcpClientCredentialType.Certificate;
+
+            tcpBind.Security.Mode = SecurityMode.Transport;
             tcpBind.MaxReceivedMessageSize = int.MaxValue;
 
-            var wshttpBind = new WSDualHttpBinding();
-            wshttpBind.Security.Mode = WSDualHttpSecurityMode.Message;
-            wshttpBind.MaxReceivedMessageSize = int.MaxValue;
+            //var wshttpBind = new WSDualHttpBinding();
+            //wshttpBind.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
+            //wshttpBind.Security.Mode = WSDualHttpSecurityMode.Message;
+            //wshttpBind.MaxReceivedMessageSize = int.MaxValue;
 
-            //var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://52.157.156.58:80"));
+            //var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://52.157.156.58:1"));
             //var df = new DuplexChannelFactory<IWcfChatServer>(this, wshttpBind, new EndpointAddress("http://52.157.156.58:80"));
-            var df = new DuplexChannelFactory<IWcfChatServer>(this, wshttpBind, new EndpointAddress("http://localhost:80"));
-            //var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://192.168.178.103:6500"));
+            //var df = new DuplexChannelFactory<IWcfChatServer>(this, wshttpBind, new EndpointAddress("http://localhost:1"));
+            //df.Credentials.UserName.UserName = "Fred";
+            //df.Credentials.UserName.Password = "123456";
+            //df.Credentials.UseIdentityConfiguration = !true;
+            //var df = new DuplexChannelFactory<IWcfChatServer>(this, wshttpBind, new EndpointAddress("http://192.168.178.103:1"));
+
+
+            //EndpointIdentity identity = EndpointIdentity.CreateDnsIdentity("RootCA");
+            //EndpointAddress address = new EndpointAddress(new Uri("net.tcp://localhost:1"), identity);
+
+            var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://localhost:1"));
+            //var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, address);
+            //   df.Credentials.ClientCertificate.SetCertificate(StoreLocation.LocalMachine, StoreName.Root, X509FindType.FindByThumbprint, "3d41d2825504f3595d21af8a0a2b1401b4e27cbc");
+            //   df.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.None;
+            //df.Credentials.UserName.UserName = "Fred";
+            //df.Credentials.UserName.Password = "123456";
+
             server = df.CreateChannel();
             server.Login(userNameTb.Text);
         }
