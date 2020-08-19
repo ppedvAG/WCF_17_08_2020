@@ -22,4 +22,7 @@ namespace WCFChat.Contracts
         [OperationContract(IsOneWay = true)]
         void ShowUserlist(IEnumerable<string> users);
     }
+
+
+
 }

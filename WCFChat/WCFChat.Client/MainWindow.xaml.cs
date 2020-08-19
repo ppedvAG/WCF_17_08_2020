@@ -38,10 +38,11 @@ namespace WCFChat.Client
             tcpBind.Security.Mode = SecurityMode.Transport;
             tcpBind.MaxReceivedMessageSize = int.MaxValue;
 
-            //var wshttpBind = new WSDualHttpBinding();
+            var wshttpBind = new WSDualHttpBinding();
+            wshttpBind.Security.Mode = WSDualHttpSecurityMode.Message;
             //wshttpBind.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
             //wshttpBind.Security.Mode = WSDualHttpSecurityMode.Message;
-            //wshttpBind.MaxReceivedMessageSize = int.MaxValue;
+            wshttpBind.MaxReceivedMessageSize = int.MaxValue;
 
             //var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://52.157.156.58:1"));
             //var df = new DuplexChannelFactory<IWcfChatServer>(this, wshttpBind, new EndpointAddress("http://52.157.156.58:80"));
@@ -55,7 +56,8 @@ namespace WCFChat.Client
             //EndpointIdentity identity = EndpointIdentity.CreateDnsIdentity("RootCA");
             //EndpointAddress address = new EndpointAddress(new Uri("net.tcp://localhost:1"), identity);
 
-            var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://localhost:1"));
+            //var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, new EndpointAddress("net.tcp://localhost:1"));
+            var df = new DuplexChannelFactory<IWcfChatServer>(this, wshttpBind, new EndpointAddress("http://localhost:1"));
             //var df = new DuplexChannelFactory<IWcfChatServer>(this, tcpBind, address);
             //   df.Credentials.ClientCertificate.SetCertificate(StoreLocation.LocalMachine, StoreName.Root, X509FindType.FindByThumbprint, "3d41d2825504f3595d21af8a0a2b1401b4e27cbc");
             //   df.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.None;

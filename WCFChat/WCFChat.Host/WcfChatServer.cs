@@ -9,7 +9,7 @@ using WCFChat.Contracts;
 namespace WCFChat.Host
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    class WcfChatServer : IWcfChatServer
+    class WcfChatServer : IWcfChatServer, IRESTfulService
     {
         Dictionary<string, IWcfChatClient> users = new Dictionary<string, IWcfChatClient>();
 
@@ -108,6 +108,11 @@ namespace WCFChat.Host
                 ms.Position = 0;
                 x.ShowImage(ms);
             });
+        }
+
+        public IEnumerable<string> GetUsers()
+        {
+            return users.Select(x => x.Key);
         }
     }
 }

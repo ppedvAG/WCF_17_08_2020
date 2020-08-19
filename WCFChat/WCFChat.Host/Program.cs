@@ -9,6 +9,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -34,16 +35,22 @@ namespace WCFChat.Host
             tcpBind.Security.Mode = SecurityMode.Transport;
             //  tcpBind.MaxReceivedMessageSize = int.MaxValue;
 
-            //var wshttpBind = new WSDualHttpBinding();
+            var wshttpBind = new WSDualHttpBinding();
+            wshttpBind.Security.Mode = WSDualHttpSecurityMode.Message;
             //wshttpBind.Security.Message.ClientCredentialType = MessageCredentialType.Windows;
             //wshttpBind.Security.Mode = WSDualHttpSecurityMode.Message;
-            //wshttpBind.MaxReceivedMessageSize = int.MaxValue;
+            wshttpBind.MaxReceivedMessageSize = int.MaxValue;
 
-            var ep = host.AddServiceEndpoint(typeof(IWcfChatServer), tcpBind, "net.tcp://localhost:1");
-            //var ep =  host.AddServiceEndpoint(typeof(IWcfChatServer), wshttpBind, "http://localhost:1");
+            //var ep = host.AddServiceEndpoint(typeof(IWcfChatServer), tcpBind, "net.tcp://localhost:1");
+            var ep = host.AddServiceEndpoint(typeof(IWcfChatServer), wshttpBind, "http://localhost.fiddler:1");
             //host.Credentials.ServiceCertificate.SetCertificate(StoreLocation.LocalMachine, StoreName.Root, X509FindType.FindByThumbprint, "cd5c861caf71c2412b99d8f4a07f2f5f5f94d433");
 
             ep.EndpointBehaviors.Add(new MyBehavior());
+
+            var webBind = new WebHttpBinding();
+            var webB = new WebHttpBehavior() { AutomaticFormatSelectionEnabled = true };
+            var webEp = host.AddServiceEndpoint(typeof(IRESTfulService), webBind, "http://localhost:2");
+            webEp.EndpointBehaviors.Add(webB);
 
             host.Open();
             Trace.WriteLine("Server wurde gestartet");
@@ -63,6 +70,10 @@ namespace WCFChat.Host
     {
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
+
+            if (request.IsEmpty)
+                return null;
+
             var buffer = request.CreateBufferedCopy(int.MaxValue);
 
             Console.WriteLine($"ORGINIAL CONTECT: {buffer.CreateMessage().GetReaderAtBodyContents().ReadOuterXml()}");
@@ -145,6 +156,18 @@ namespace WCFChat.Host
         }
     }
 
+
+    [ServiceContract]
+    public interface IRESTfulService
+    {
+        [OperationContract]
+        [WebGet(UriTemplate = "Users")]
+        IEnumerable<string> GetUsers();
+
+    }
+
+
+
     public class MyBehavior : IEndpointBehavior
     {
         public void AddBindingParameters(ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
@@ -159,6 +182,7 @@ namespace WCFChat.Host
 
         public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
+            endpointDispatcher.DispatchRuntime.ValidateMustUnderstand = false;
             endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new Inspecto());
         }
 
